@@ -22,7 +22,6 @@ public class ReleaseDateValidator implements ConstraintValidator<ReleaseDate, Lo
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
         }
-
         return isValid;
     }
 }

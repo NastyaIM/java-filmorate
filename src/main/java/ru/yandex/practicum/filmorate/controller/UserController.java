@@ -59,8 +59,4 @@ public class UserController {
     private int getId() {
         return id++;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 8886f09d486d04566421ad56c2f6369799029d48
