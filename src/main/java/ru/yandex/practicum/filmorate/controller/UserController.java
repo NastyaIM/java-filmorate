@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
-    private static int id = 1;
+    private int id = 1;
 
     @GetMapping
     public ResponseEntity<List<User>> findAllUsers() {

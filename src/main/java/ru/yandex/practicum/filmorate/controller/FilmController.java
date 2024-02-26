@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
-    private static int id = 1;
+    private int id = 1;
 
     @GetMapping
     public ResponseEntity<List<Film>> findAllFilms() {
