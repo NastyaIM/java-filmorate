@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@Valid @RequestBody User user) throws ValidationException {
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         if (users.containsValue(user)) {
             log.warn("Пользователь с таким email уже существует");
             throw new ValidationException("Пользователь уже существует");
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) throws ValidationException {
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         if (!users.containsKey(user.getId())) {
             log.warn("Нельзя обновить данные, неправильный id");
             throw new ValidationException("Пользователя с таким идентификатором нет");

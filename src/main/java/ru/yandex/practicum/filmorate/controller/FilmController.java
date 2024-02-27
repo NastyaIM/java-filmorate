@@ -27,7 +27,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         if (films.containsValue(film)) {
             log.warn("Фильм уже существует");
             throw new ValidationException("Фильм уже существует");
@@ -40,7 +40,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
             log.warn("Фильма с таким идентификатором не существует");
             throw new ValidationException("Фильма с таким идентификатором не существует");
