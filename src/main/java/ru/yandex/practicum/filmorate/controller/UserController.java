@@ -1,62 +1,74 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.ValidationException;
+import ru.yandex.practicum.filmorate.service.BaseUserService;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private int id = 1;
+    private final UserService service;
+
+    @Autowired
+    public UserController(BaseUserService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public ResponseEntity<List<User>> findAllUsers() {
-        log.debug("Всего пользователей: " + users.size());
-        return new ResponseEntity<>(new ArrayList<>(users.values()), HttpStatus.OK);
+    public List<User> getAll() {
+        log.info("Получение списка всех пользователей");
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public User getById(@PathVariable int id) {
+        log.info("Получение пользователя c id {}", id);
+        return service.getById(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable int id) {
+        log.info("Получение списка друзей пользователя с id {}", id);
+        return service.getAllFriends(id);
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        if (users.containsValue(user)) {
-            log.warn("Пользователь с таким email уже существует");
-            throw new ValidationException("Пользователь уже существует");
-        }
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-        int userId = getId();
-        user.setId(userId);
-        log.debug("Добавляем пользователя {} с id {}", user, userId);
-        users.put(user.getId(), user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.CREATED)
+    public User add(@Valid @RequestBody User user) {
+        log.info("Добавление пользователя {}", user);
+        return service.add(user);
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            log.warn("Нельзя обновить данные, неправильный id");
-            throw new ValidationException("Пользователя с таким идентификатором нет");
-        }
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-        log.debug("Будет обновлен пользователь с id: {} на {}", user.getId(), user);
-        users.put(user.getId(), user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public User update(@Valid @RequestBody User user) {
+        log.info("Обновление пользователя {}", user);
+        return service.update(user);
     }
 
-    private int getId() {
-        return id++;
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        log.info("Добавление пользователя с id {} в список друзей пользователя с id {}", id, friendId);
+        service.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        log.info("Удаление пользователя с id {} из списка друзей пользователя с id {}", id, friendId);
+        service.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        log.info("Возвращение списка общих друзей пользователея с id {} и {}", id, otherId);
+        return service.getCommonFriends(id, otherId);
     }
 }
