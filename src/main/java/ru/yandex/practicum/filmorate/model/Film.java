@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.annotation.ReleaseDate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -26,4 +27,6 @@ public class Film {
 
     @PositiveOrZero
     private int duration;
+
+    private Set<Integer> likes;
 }

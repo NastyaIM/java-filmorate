@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
-    private final Map<Integer, Set<Integer>> friends = new HashMap<>();
     private int id = 1;
 
     @Override
@@ -28,8 +27,8 @@ public class InMemoryUserStorage implements UserStorage {
         }
         int userId = generateId();
         user.setId(userId);
+        user.setFriends(new HashSet<>());
         users.put(user.getId(), user);
-        friends.put(userId, new HashSet<>());
         return user;
     }
 
@@ -38,6 +37,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
+        user.setFriends(new HashSet<>());
         users.put(user.getId(), user);
         return user;
     }
@@ -72,7 +72,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     private Set<Integer> getFriendsIds(int id) {
-        return friends.get(id);
+        return users.get(id).getFriends();
     }
 
     private List<User> getFriends(Set<Integer> ids) {
