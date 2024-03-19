@@ -27,14 +27,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film add(Film film) {
         int filmId = generateId();
         film.setId(filmId);
-        film.setLikes(new HashSet<>());
         films.put(film.getId(), film);
         return film;
     }
 
     @Override
     public Film update(Film film) {
-        film.setLikes(new HashSet<>());
         films.put(film.getId(), film);
         return film;
     }
@@ -68,11 +66,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         return id++;
     }
 
+    //аналогично
     private List<Film> getFilms(List<Integer> ids) {
-        List<Film> films = new ArrayList<>();
-        for (Integer i : ids) {
-            films.add(getById(i));
-        }
-        return films;
+        return ids.stream().map(this::getById).collect(Collectors.toList());
     }
 }

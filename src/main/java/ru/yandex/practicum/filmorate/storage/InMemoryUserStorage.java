@@ -27,7 +27,6 @@ public class InMemoryUserStorage implements UserStorage {
         }
         int userId = generateId();
         user.setId(userId);
-        user.setFriends(new HashSet<>());
         users.put(user.getId(), user);
         return user;
     }
@@ -37,7 +36,6 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
-        user.setFriends(new HashSet<>());
         users.put(user.getId(), user);
         return user;
     }
@@ -61,10 +59,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getCommonFriends(int id, int otherId) {
-        Set<Integer> commonFriendIds = getFriendsIds(id).stream()
-                .filter(i -> getFriendsIds(otherId).contains(i))
-                .collect(Collectors.toSet());
-        return getFriends(commonFriendIds);
+        Set<Integer> userFriends = getFriendsIds(id);
+        userFriends.retainAll(getFriendsIds(otherId));
+        return getFriends(userFriends);
     }
 
     private int generateId() {
@@ -72,14 +69,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     private Set<Integer> getFriendsIds(int id) {
-        return users.get(id).getFriends();
+        return getById(id).getFriends();
     }
 
+    //хз как тут чисто с помощью new ArrayList<>(ids)
+    //получить из сета айдишников список юзеров
     private List<User> getFriends(Set<Integer> ids) {
-        List<User> friends = new ArrayList<>();
-        for (Integer i : ids) {
-            friends.add(users.get(i));
-        }
-        return friends;
+        return ids.stream().map(this::getById).collect(Collectors.toList());
     }
 }
