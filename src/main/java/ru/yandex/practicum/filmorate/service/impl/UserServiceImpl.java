@@ -1,31 +1,32 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
 @Service
-public class BaseUserService implements UserService {
-    private final UserStorage storage;
+public class UserServiceImpl implements UserService {
+    private final UserStorage userStorage;
 
     @Autowired
-    public BaseUserService(UserStorage storage) {
-        this.storage = storage;
+    public UserServiceImpl(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     @Override
     public List<User> getAll() {
-        return storage.getAll();
+        return userStorage.getAll();
     }
 
     @Override
     public User getById(int id) {
-        User user = storage.getById(id);
+        User user = userStorage.getById(id);
         if (user == null) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
@@ -34,52 +35,52 @@ public class BaseUserService implements UserService {
 
     @Override
     public User add(User user) {
-        if (storage.getAll().contains(user)) {
+        if (userStorage.getAll().contains(user)) {
             throw new AlreadyExistsException("Пользователь уже существует");
         }
-        return storage.add(user);
+        return userStorage.add(user);
     }
 
     @Override
     public User update(User user) {
-        if (storage.getById(user.getId()) == null) {
+        if (userStorage.getById(user.getId()) == null) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
-        return storage.update(user);
+        return userStorage.update(user);
     }
 
     @Override
     public void addFriend(int id, int friendId) {
-        if (storage.getById(id) == null) {
+        if (userStorage.getById(id) == null) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
-        if (storage.getById(friendId) == null) {
+        if (userStorage.getById(friendId) == null) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
-        storage.addFriend(id, friendId);
+        userStorage.addFriend(id, friendId);
     }
 
     @Override
     public void deleteFriend(int id, int friendId) {
-        if (storage.getById(id) == null) {
+        if (userStorage.getById(id) == null) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
-        if (storage.getById(friendId) == null) {
+        if (userStorage.getById(friendId) == null) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
-        storage.deleteFriend(id, friendId);
+        userStorage.deleteFriend(id, friendId);
     }
 
     @Override
     public List<User> getAllFriends(int id) {
-        if (storage.getById(id) == null) {
+        if (userStorage.getById(id) == null) {
             throw new NotFoundException("Пользователя с таким id не существует");
         }
-        return storage.getAllFriends(id);
+        return userStorage.getAllFriends(id);
     }
 
     @Override
     public List<User> getCommonFriends(int id, int otherId) {
-        return storage.getCommonFriends(id, otherId);
+        return userStorage.getCommonFriends(id, otherId);
     }
 }
