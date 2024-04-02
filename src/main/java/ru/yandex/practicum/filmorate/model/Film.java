@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -36,7 +37,7 @@ public class Film {
     @NotNull
     private Mpa mpa;
 
-    private LinkedHashSet<Genre> genres;
+    private Set<Genre> genres = new LinkedHashSet<>();
 
     public Film(String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
         this.name = name;

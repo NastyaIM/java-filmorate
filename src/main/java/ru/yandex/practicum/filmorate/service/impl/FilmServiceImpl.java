@@ -14,8 +14,8 @@ import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,8 +45,7 @@ public class FilmServiceImpl implements FilmService {
         if (film == null) {
             throw new NotFoundException("Фильма с таким id не существует");
         }
-        LinkedHashSet<Genre> genres = new LinkedHashSet<>(genreStorage.getAllFilmGenres(id));
-        film.setGenres(genres);
+        film.setGenres(genreStorage.getAllFilmGenres(id));
         return film;
     }
 
@@ -61,11 +60,11 @@ public class FilmServiceImpl implements FilmService {
         if (film.getGenres() != null) {
             List<Integer> ids = film.getGenres().stream()
                     .map(Genre::getId).collect(Collectors.toList());
-            List<Genre> genres = genreStorage.getByIds(ids);
+            Set<Genre> genres = genreStorage.getByIds(ids);
             if (ids.size() != genres.size()) {
                 throw new ValidationException("Неправильный жанр");
             }
-            film.setGenres(new LinkedHashSet<>(genres));
+            film.setGenres(genres);
         }
         return filmStorage.add(film);
     }

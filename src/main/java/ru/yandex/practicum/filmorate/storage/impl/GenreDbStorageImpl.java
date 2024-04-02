@@ -6,12 +6,20 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class GenreDbStorageImpl implements GenreStorage {
     private final JdbcOperations jdbcOperations;
+    private static final String SQL_GET_ALL = "select * from genres";
+    private static final String SQL_GET_BY_ID = "select * from genres where genre_id = ?";
+    private static final String SQL_GET_ALL_FILMS_GENRES = "select * from genres as g " +
+            "join films_genres as fg on fg.genre_id = g.genre_id " +
+            "join films as f on fg.film_id = f.film_id " +
+            "where f.film_id = ? " +
+            "order by fg.genre_id";
 
     public GenreDbStorageImpl(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
@@ -19,14 +27,12 @@ public class GenreDbStorageImpl implements GenreStorage {
 
     @Override
     public List<Genre> getAll() {
-        String sqlQuery = "select * from genres";
-        return jdbcOperations.query(sqlQuery, genreRowMapper());
+        return jdbcOperations.query(SQL_GET_ALL, genreRowMapper());
     }
 
     @Override
     public Genre getById(int id) {
-        String sqlQuery = "select * from genres where genre_id = ?";
-        List<Genre> genres = jdbcOperations.query(sqlQuery, genreRowMapper(), id);
+        List<Genre> genres = jdbcOperations.query(SQL_GET_BY_ID, genreRowMapper(), id);
         if (genres.size() != 1) {
             return null;
         }
@@ -34,8 +40,8 @@ public class GenreDbStorageImpl implements GenreStorage {
     }
 
     @Override
-    public List<Genre> getByIds(List<Integer> ids) {
-        List<Genre> genres = new ArrayList<>();
+    public Set<Genre> getByIds(List<Integer> ids) {
+        Set<Genre> genres = new LinkedHashSet<>();
         ids.forEach(id -> {
             Genre genre = getById(id);
             if (genre != null) {
@@ -46,12 +52,8 @@ public class GenreDbStorageImpl implements GenreStorage {
     }
 
     @Override
-    public List<Genre> getAllFilmGenres(int filmId) {
-        String sqlQuery = "select * from genres as g " +
-                "join films_genres as fg on fg.genre_id = g.genre_id " +
-                "join films as f on fg.film_id = f.film_id " +
-                "where f.film_id = ?";
-        return jdbcOperations.query(sqlQuery, genreRowMapper(), filmId);
+    public Set<Genre> getAllFilmGenres(int filmId) {
+        return new LinkedHashSet<>(jdbcOperations.query(SQL_GET_ALL_FILMS_GENRES, genreRowMapper(), filmId));
     }
 
     private RowMapper<Genre> genreRowMapper() {

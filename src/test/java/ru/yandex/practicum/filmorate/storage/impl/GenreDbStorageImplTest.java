@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -39,7 +40,7 @@ class GenreDbStorageImplTest {
 
     @Test
     public void testGetAllFilmGenres() {
-        List<Genre> filmGenres = genreStorage.getAllFilmGenres(4);
-        assertThat(filmGenres).isEqualTo(List.of(genreStorage.getById(1), genreStorage.getById(3)));
+        Set<Genre> filmGenres = genreStorage.getAllFilmGenres(4);
+        assertThat(filmGenres).isEqualTo(Set.of(genreStorage.getById(1), genreStorage.getById(3)));
     }
 }

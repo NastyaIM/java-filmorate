@@ -11,6 +11,8 @@ import java.util.List;
 @Component
 public class MpaDbStorageImpl implements MpaStorage {
     private final JdbcOperations jdbcOperations;
+    private static final String SQL_GET_ALL = "select * from mpa";
+    private static final String SQL_GET_BY_ID = "select * from mpa where rating_id = ?";
 
     public MpaDbStorageImpl(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
@@ -18,14 +20,12 @@ public class MpaDbStorageImpl implements MpaStorage {
 
     @Override
     public List<Mpa> getAll() {
-        String sqlQuery = "select * from mpa";
-        return jdbcOperations.query(sqlQuery, mpaRowMapper());
+        return jdbcOperations.query(SQL_GET_ALL, mpaRowMapper());
     }
 
     @Override
     public Mpa getById(int id) {
-        String sqlQuery = "select * from mpa where rating_id = ?";
-        List<Mpa> mpa = jdbcOperations.query(sqlQuery, mpaRowMapper(), id);
+        List<Mpa> mpa = jdbcOperations.query(SQL_GET_BY_ID, mpaRowMapper(), id);
         if (mpa.size() != 1) {
             return null;
         }
