@@ -23,6 +23,7 @@ class FilmTest {
         film.setDescription("new film");
         film.setDuration(199);
         film.setReleaseDate(LocalDate.of(1999, Month.AUGUST, 14));
+        film.setMpa(new Mpa(4));
     }
 
     @Test

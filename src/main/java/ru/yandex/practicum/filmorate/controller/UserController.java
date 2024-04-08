@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.BaseUserService;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.impl.UserServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,7 +18,7 @@ public class UserController {
     private final UserService service;
 
     @Autowired
-    public UserController(BaseUserService service) {
+    public UserController(UserServiceImpl service) {
         this.service = service;
     }
 
@@ -55,14 +55,14 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
-        log.info("Добавление пользователя с id {} в список друзей пользователя с id {}", id, friendId);
+        log.info("Добавление пользователя с id {} в список друзей пользователя с id {}", friendId, id);
         service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
-        log.info("Удаление пользователя с id {} из списка друзей пользователя с id {}", id, friendId);
+        log.info("Удаление пользователя с id {} из списка друзей пользователя с id {}", friendId, id);
         service.deleteFriend(id, friendId);
     }
 
